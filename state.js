@@ -37,10 +37,8 @@ export const state = reactive({
     { id: 'S2', name: 'Maria Santos', grade: 'Grade 7', balance: 0 },
     { id: 'S3', name: 'Ricardo Dalisay', grade: 'Grade 8', balance: 0 }
   ],
-  // Universal Fee Categories for Billing
   feeCategories: ['Tuition', 'Miscellaneous', 'Lab Fees', 'Library Fees', 'Sports Fee', 'Uniform'],
   
-  // Global Fee Templates
   feeTemplates: [
     { 
       id: 'T1', 
@@ -57,10 +55,48 @@ export const state = reactive({
     { id: 'V1', name: 'National Book Store', category: 'Supplies', payable: 1250 },
     { id: 'V2', name: 'Meralco', category: 'Utilities', payable: 0 }
   ],
+  
+  // ENHANCED STAFF STRUCTURE
   staff: [
-    { id: 'ST1', name: 'Prof. Ricardo Silva', position: 'Senior High Teacher', basicPay: 35000 },
-    { id: 'ST2', name: 'Elena Gomez', position: 'Administrative Staff', basicPay: 22000 }
+    { 
+      id: 'ST1', 
+      name: 'Prof. Ricardo Silva', 
+      position: 'Senior High Teacher', 
+      category: 'Faculty', 
+      basicPay: 35000,
+      deductionProfile: {
+        sss: { mode: 'default', value: 0 },
+        philHealth: { mode: 'default', value: 0 },
+        pagIbig: { mode: 'manual', value: 200 }, // Specific override
+        wTax: { mode: 'default', value: 0 },
+        custom: [{ name: 'Faculty Assoc Fee', value: 150 }]
+      }
+    },
+    { 
+      id: 'ST2', 
+      name: 'Elena Gomez', 
+      position: 'Administrative Staff', 
+      category: 'Admin', 
+      basicPay: 22000,
+      deductionProfile: {
+        sss: { mode: 'default', value: 0 },
+        philHealth: { mode: 'default', value: 0 },
+        pagIbig: { mode: 'default', value: 0 },
+        wTax: { mode: 'manual', value: 500 }, // Fixed tax override
+        custom: []
+      }
+    }
   ],
+
+  payrollSettings: {
+    sssRate: 0.045, 
+    philHealthRate: 0.02,
+    pagIbigFlat: 100,
+    wTaxThreshold: 20833,
+    wTaxRate: 0.15,
+    customDeductions: [] // Global optional ones
+  },
+
   assets: [
     { id: 'A1', name: 'Computer Lab 1 (Set of 30)', cost: 750000, dep: 15000, dateAcquired: '2023-01-15' }
   ],
@@ -71,7 +107,6 @@ export const state = reactive({
   payrollRecords: [],
   auditLogs: [],
   
-  // App State
   aiInsight: '',
   isAnalyzing: false
 });
@@ -105,7 +140,6 @@ export const useAccounting = () => {
   };
 
   const postTransaction = (description, reference, lines, module, meta = {}) => {
-    console.log(`[STATE] postTransaction: ${description}`);
     const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     state.entries.push({
       id,
@@ -119,14 +153,7 @@ export const useAccounting = () => {
   };
 
   const summary = computed(() => {
-    let totalAssets = 0;
-    let totalLiabilities = 0;
-    let totalEquity = 0;
-    let totalRevenue = 0;
-    let totalExpenses = 0;
-    let totalSystemDebit = 0;
-    let totalSystemCredit = 0;
-
+    let totalAssets = 0, totalLiabilities = 0, totalEquity = 0, totalRevenue = 0, totalExpenses = 0, totalSystemDebit = 0, totalSystemCredit = 0;
     state.accounts.forEach(acc => {
       const bal = getAccountBalance(acc.id);
       if (acc.type === AccountType.ASSET) totalAssets += bal;
@@ -135,22 +162,14 @@ export const useAccounting = () => {
       if (acc.type === AccountType.REVENUE) totalRevenue += bal;
       if (acc.type === AccountType.EXPENSE) totalExpenses += bal;
     });
-
     state.entries.forEach(entry => {
       entry.lines.forEach(line => {
         totalSystemDebit += (Number(line.debit) || 0);
         totalSystemCredit += (Number(line.credit) || 0);
       });
     });
-
     return {
-      totalAssets,
-      totalLiabilities,
-      totalEquity,
-      totalRevenue,
-      totalExpenses,
-      totalSystemDebit,
-      totalSystemCredit,
+      totalAssets, totalLiabilities, totalEquity, totalRevenue, totalExpenses, totalSystemDebit, totalSystemCredit,
       netIncome: totalRevenue - totalExpenses,
       totalAR: state.students.reduce((sum, s) => sum + Number(s.balance), 0)
     };
