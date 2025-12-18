@@ -54,6 +54,33 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+
+        @media print {
+            body { 
+                background: white !important; 
+                overflow: visible !important;
+                color: black !important;
+            }
+            #app aside, 
+            #app header, 
+            #app .no-print { 
+                display: none !important; 
+            }
+            main { 
+                padding: 0 !important; 
+                margin: 0 !important;
+                overflow: visible !important;
+            }
+            .premium-card {
+                box-shadow: none !important;
+                border: 1px solid #eee !important;
+                border-radius: 0 !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+        }
+        .print-only { display: none; }
     </style>
     <script type="importmap">
     {

@@ -4,7 +4,6 @@ import { AccountType, INITIAL_ACCOUNTS } from './constants.js';
 
 export const state = reactive({
   activeTab: 'dashboard',
-  // Accounting Core
   accounts: [...INITIAL_ACCOUNTS],
   entries: [
     {
@@ -17,25 +16,12 @@ export const state = reactive({
         { accountId: '5', debit: 0, credit: 50000 }
       ],
       meta: {}
-    },
-    {
-      id: 'init-2',
-      date: '2024-01-05',
-      description: 'Initial Student Assessments',
-      reference: 'INV-001',
-      lines: [
-        { accountId: '2', debit: 5000, credit: 0 },
-        { accountId: '6', debit: 0, credit: 5000 }
-      ],
-      meta: { studentId: 'S1' }
     }
   ],
   
-  // WELA Modules Data
   students: [
     { id: 'S1', name: 'Juan Dela Cruz', grade: 'Grade 7', balance: 5000 },
-    { id: 'S2', name: 'Maria Santos', grade: 'Grade 7', balance: 0 },
-    { id: 'S3', name: 'Ricardo Dalisay', grade: 'Grade 8', balance: 0 }
+    { id: 'S2', name: 'Maria Santos', grade: 'Grade 7', balance: 0 }
   ],
   feeCategories: ['Tuition', 'Miscellaneous', 'Lab Fees', 'Library Fees', 'Sports Fee', 'Uniform'],
   
@@ -52,11 +38,9 @@ export const state = reactive({
   ],
   
   suppliers: [
-    { id: 'V1', name: 'National Book Store', category: 'Supplies', payable: 1250 },
-    { id: 'V2', name: 'Meralco', category: 'Utilities', payable: 0 }
+    { id: 'V1', name: 'National Book Store', category: 'Supplies', payable: 1250 }
   ],
   
-  // ENHANCED STAFF STRUCTURE
   staff: [
     { 
       id: 'ST1', 
@@ -65,12 +49,10 @@ export const state = reactive({
       category: 'Faculty', 
       basicPay: 35000,
       deductionProfile: {
-        sss: { mode: 'default', value: 0 },
-        philHealth: { mode: 'default', value: 0 },
-        pagIbig: { mode: 'manual', value: 200 }, // Specific override
-        wTax: { mode: 'default', value: 0 },
-        custom: [{ name: 'Faculty Assoc Fee', value: 150 }]
-      }
+        statutory: { sss: 1200, pagIbig: 200, philHealth: 450 },
+        custom: []
+      },
+      loan: { principal: 10000, balance: 8000, termsRemaining: 8, monthlyAmortization: 1000 }
     },
     { 
       id: 'ST2', 
@@ -79,30 +61,28 @@ export const state = reactive({
       category: 'Admin', 
       basicPay: 22000,
       deductionProfile: {
-        sss: { mode: 'default', value: 0 },
-        philHealth: { mode: 'default', value: 0 },
-        pagIbig: { mode: 'default', value: 0 },
-        wTax: { mode: 'manual', value: 500 }, // Fixed tax override
+        statutory: { sss: 800, pagIbig: 200, philHealth: 300 },
         custom: []
-      }
+      },
+      loan: { principal: 0, balance: 0, termsRemaining: 0, monthlyAmortization: 0 }
     }
   ],
 
   payrollSettings: {
-    sssRate: 0.045, 
-    philHealthRate: 0.02,
-    pagIbigFlat: 100,
+    institutionalDeductions: [
+      { id: 'd1', name: 'T-Shirt Fee', value: 350 },
+      { id: 'd2', name: 'Community Alimony', value: 100 },
+      { id: 'd3', name: 'Offering/Donation', value: 50 }
+    ],
     wTaxThreshold: 20833,
-    wTaxRate: 0.15,
-    customDeductions: [] // Global optional ones
+    wTaxRate: 0.15
   },
 
   assets: [
     { id: 'A1', name: 'Computer Lab 1 (Set of 30)', cost: 750000, dep: 15000, dateAcquired: '2023-01-15' }
   ],
   budgets: [
-    { accountId: '7', amount: 2000000, period: '2024' },
-    { accountId: '8', amount: 150000, period: '2024' }
+    { accountId: '7', amount: 2000000, period: '2024' }
   ],
   payrollRecords: [],
   auditLogs: [],
